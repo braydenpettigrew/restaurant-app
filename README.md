@@ -5,7 +5,7 @@ The frontend was developed using React, while the backend utilizes the Express.j
 # Deployment
 1. Ensure Node.js, node package manager, and MySQL server and workbench are installed on your system.
 2. Clone the GitHub repository containing the application’s source code. 
-3. Using the provided database file that is included in the GitHub repository, import the schema into an existing database using MySQL workbench. 
+3. Using the provided database file that is included in the GitHub repository (restaurant-app-sample-db.sql), import the schema into an existing database using MySQL workbench. 
 4. Some code in “backend.js” must be changed:
    
 ![Alt text](https://github.com/braydenpettigrew/restaurant-app/blob/main/readme-image.png)
