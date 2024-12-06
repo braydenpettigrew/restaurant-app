@@ -500,23 +500,10 @@ app.get("/aggregate", (req, res) => {
 app.get("/orderdetails", (req, res) => {
   const order = req.query.order;
   const restaurant_id = req.query.restaurant_id;
+  let query = "";
 
-  let value = "";
   if (order === "lname") {
-    value = "c.lname";
-  } else if (order === "fname") {
-    value = "c.fname";
-  } else if (order === "newest") {
-    value = "co.time_placed DESC";
-  } else if (order === "oldest") {
-    value = "co.time_placed ASC";
-  } else if (order === "expensive") {
-    value = "total_price DESC";
-  } else if (order === "cheap") {
-    value = "total_price ASC";
-  }
-
-  const query = `
+    query = `
     SELECT co.username, c.fname, c.lname, co.time_placed, a.street_addr, a.city, a.state, a.zip, 
            SUM(oi.quantity * mi.price) AS total_price
     FROM customer_order co 
@@ -526,8 +513,74 @@ app.get("/orderdetails", (req, res) => {
     JOIN address a ON co.address_id = a.address_id
     WHERE co.restaurant_id = ?
     GROUP BY co.username, c.fname, c.lname, co.time_placed, a.street_addr, a.city, a.state, a.zip
-    ORDER BY ${value};
+    ORDER BY c.lname;
   `;
+  } else if (order === "fname") {
+    query = `
+    SELECT co.username, c.fname, c.lname, co.time_placed, a.street_addr, a.city, a.state, a.zip, 
+           SUM(oi.quantity * mi.price) AS total_price
+    FROM customer_order co 
+    JOIN order_item oi ON co.username = oi.username
+    JOIN customer c ON co.username = c.cust_username
+    JOIN menu_item mi ON oi.item_name = mi.name
+    JOIN address a ON co.address_id = a.address_id
+    WHERE co.restaurant_id = ?
+    GROUP BY co.username, c.fname, c.lname, co.time_placed, a.street_addr, a.city, a.state, a.zip
+    ORDER BY c.fname;
+  `;
+  } else if (order === "newest") {
+    query = `
+    SELECT co.username, c.fname, c.lname, co.time_placed, a.street_addr, a.city, a.state, a.zip, 
+           SUM(oi.quantity * mi.price) AS total_price
+    FROM customer_order co 
+    JOIN order_item oi ON co.username = oi.username
+    JOIN customer c ON co.username = c.cust_username
+    JOIN menu_item mi ON oi.item_name = mi.name
+    JOIN address a ON co.address_id = a.address_id
+    WHERE co.restaurant_id = ?
+    GROUP BY co.username, c.fname, c.lname, co.time_placed, a.street_addr, a.city, a.state, a.zip
+    ORDER BY co.time_placed DESC;
+  `;
+  } else if (order === "oldest") {
+    query = `
+    SELECT co.username, c.fname, c.lname, co.time_placed, a.street_addr, a.city, a.state, a.zip, 
+           SUM(oi.quantity * mi.price) AS total_price
+    FROM customer_order co 
+    JOIN order_item oi ON co.username = oi.username
+    JOIN customer c ON co.username = c.cust_username
+    JOIN menu_item mi ON oi.item_name = mi.name
+    JOIN address a ON co.address_id = a.address_id
+    WHERE co.restaurant_id = ?
+    GROUP BY co.username, c.fname, c.lname, co.time_placed, a.street_addr, a.city, a.state, a.zip
+    ORDER BY co.time_placed ASC;
+  `;
+  } else if (order === "expensive") {
+    query = `
+    SELECT co.username, c.fname, c.lname, co.time_placed, a.street_addr, a.city, a.state, a.zip, 
+           SUM(oi.quantity * mi.price) AS total_price
+    FROM customer_order co 
+    JOIN order_item oi ON co.username = oi.username
+    JOIN customer c ON co.username = c.cust_username
+    JOIN menu_item mi ON oi.item_name = mi.name
+    JOIN address a ON co.address_id = a.address_id
+    WHERE co.restaurant_id = ?
+    GROUP BY co.username, c.fname, c.lname, co.time_placed, a.street_addr, a.city, a.state, a.zip
+    ORDER BY total_price DESC;
+  `;
+  } else if (order === "cheap") {
+    query = `
+    SELECT co.username, c.fname, c.lname, co.time_placed, a.street_addr, a.city, a.state, a.zip, 
+           SUM(oi.quantity * mi.price) AS total_price
+    FROM customer_order co 
+    JOIN order_item oi ON co.username = oi.username
+    JOIN customer c ON co.username = c.cust_username
+    JOIN menu_item mi ON oi.item_name = mi.name
+    JOIN address a ON co.address_id = a.address_id
+    WHERE co.restaurant_id = ?
+    GROUP BY co.username, c.fname, c.lname, co.time_placed, a.street_addr, a.city, a.state, a.zip
+    ORDER BY total_price ASC;
+  `;
+  }
 
   const orderItemsQuery = `
   SELECT oi.username, oi.item_name, oi.quantity
