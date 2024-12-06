@@ -147,7 +147,7 @@ const Home = () => {
               name="username"
             />
             <Input
-              type="text"
+              type="password"
               placeholder="Password"
               onChange={handleChange}
               name="password"

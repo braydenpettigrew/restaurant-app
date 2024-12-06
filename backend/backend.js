@@ -38,7 +38,6 @@ app.post("/login", (req, res) => {
         }
 
         if (isMatch) {
-          console.log("match");
           res.json({ username: result[0].username });
         } else {
           res.status(401).json({ error: "Invalid credentials" });

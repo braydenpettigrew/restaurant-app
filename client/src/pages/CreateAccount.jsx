@@ -278,7 +278,7 @@ const CreateAccount = () => {
         />
         <label htmlFor="password">Password</label>
         <Input
-          type="text"
+          type="password"
           placeholder="Password"
           onChange={handleUserChange}
           name="password"
